@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="description" content="MODERNVINE — An online community for young Nigerians navigating the modern world, rooted in John 15:8."/>
+<title>MODERNVINE — Join the Community</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Mono:wght@400;500&family=Lora:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet"/>
+
+<style>
+/* ── RESET & BASE ──────────────────────────────────────────── */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+  --vine:    #1a3a1a;
+  --vine-d:  #0c2010;
+  --vine-m:  #243e24;
+  --leaf:    #2e6b2e;
+  --leaf2:   #48864a;
+  --gold:    #c9a84c;
+  --gold2:   #e6c86e;
+  --gold3:   #a8883c;
+  --cream:   #f7f2e8;
+  --warm:    #e8dfc8;
+  --bark:    #6b4c2a;
+  --text:    #e8dfc8;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--vine-d);
+  color: var(--text);
+  font-family: 'Lora', Georgia, serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+  cursor: default;
+}
+
+/* ── ANIMATED BACKGROUND ───────────────────────────────────── */
+.bg-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.bg-glow {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.18;
+}
+
+.bg-glow-1 {
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, #2e6b2e, transparent);
+  top: -100px; left: 50%;
+  transform: translateX(-50%);
+  animation: drift1 12s ease-in-out infinite alternate;
+}
+
+.bg-glow-2 {
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, #c9a84c, transparent);
+  bottom: 0; right: -100px;
+  opacity: 0.10;
+  animation: drift2 15s ease-in-out infinite alternate;
+}
+
+.bg-glow-3 {
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, #2e6b2e, transparent);
+  bottom: 200px; left: -80px;
+  animation: drift3 10s ease-in-out infinite alternate;
+}
+
+/* Fine grid texture */
+.bg-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(46,107,46,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(46,107,46,0.06) 1px, transparent 1px);
+  background-size: 52px 52px;
+}
+
+/* Noise grain overlay */
+.bg-grain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+}
+
+@keyframes drift1 {
+  from { transform: translateX(-50%) translateY(0px); }
+  to   { transform: translateX(-50%) translateY(-40px); }
+}
+@keyframes drift2 {
+  from { transform: translate(0,0); }
+  to   { transform: translate(-30px,-40px); }
+}
+@keyframes drift3 {
+  from { transform: translate(0,0); }
+  to   { transform: translate(20px,-30px); }
+}
+
+/* ── LAYOUT ─────────────────────────────────────────────────── */
+.page {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px 60px;
+}
+
+.card {
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+
+/* ── VINE SVG ICON ──────────────────────────────────────────── */
+.vine-icon {
+  margin-bottom: 28px;
+  opacity: 0;
+  animation: fadeUp 0.8s 0.1s ease forwards;
+}
+
+.vine-icon svg {
+  width: 64px;
+  height: 64px;
+  filter: drop-shadow(0 0 12px rgba(201,168,76,0.4));
+}
+
+/* ── WORDMARK ───────────────────────────────────────────────── */
+.wordmark {
+  text-align: center;
+  margin-bottom: 6px;
+  opacity: 0;
+  animation: fadeUp 0.8s 0.2s ease forwards;
+}
+
+.wordmark-modern {
+  display: block;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-weight: 600;
+  font-size: clamp(42px, 11vw, 72px);
+  letter-spacing: 0.12em;
+  color: var(--cream);
+  line-height: 1;
+}
+
+.wordmark-vine {
+  display: block;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-weight: 700;
+  font-size: clamp(58px, 15vw, 98px);
+  letter-spacing: 0.06em;
+  color: var(--gold);
+  line-height: 0.95;
+  text-shadow: 0 0 40px rgba(201,168,76,0.25);
+}
+
+/* ── GOLD RULE ──────────────────────────────────────────────── */
+.rule {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 20px 0;
+  opacity: 0;
+  animation: fadeUp 0.8s 0.3s ease forwards;
+}
+
+.rule-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+
+.rule-diamond {
+  width: 8px; height: 8px;
+  background: var(--gold);
+  transform: rotate(45deg);
+  flex-shrink: 0;
+}
+
+/* ── VERSE ──────────────────────────────────────────────────── */
+.verse {
+  text-align: center;
+  margin-bottom: 4px;
+  opacity: 0;
+  animation: fadeUp 0.8s 0.35s ease forwards;
+}
+
+.verse-text {
+  font-style: italic;
+  font-size: clamp(14px, 3.8vw, 17px);
+  color: var(--gold2);
+  line-height: 1.65;
+  letter-spacing: 0.01em;
+}
+
+.verse-ref {
+  display: block;
+  margin-top: 6px;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  color: var(--gold3);
+  text-transform: uppercase;
+}
+
+/* ── TAGLINE ────────────────────────────────────────────────── */
+.tagline {
+  text-align: center;
+  margin: 20px 0 0;
+  opacity: 0;
+  animation: fadeUp 0.8s 0.45s ease forwards;
+}
+
+.tagline p {
+  font-size: clamp(13px, 3.6vw, 16px);
+  line-height: 1.75;
+  color: rgba(232,223,200,0.75);
+  max-width: 380px;
+}
+
+.tagline strong {
+  color: var(--cream);
+  font-weight: 600;
+}
+
+/* ── PILLARS ROW ────────────────────────────────────────────── */
+.pillars {
+  display: flex;
+  gap: 6px;
+  margin: 24px 0 0;
+  opacity: 0;
+  animation: fadeUp 0.8s 0.5s ease forwards;
+}
+
+.pillar-tag {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--leaf2);
+  padding: 5px 10px;
+  border: 1px solid rgba(72,134,74,0.35);
+  border-radius: 2px;
+  background: rgba(46,107,46,0.08);
+}
+
+/* ── CTA BUTTON ─────────────────────────────────────────────── */
+.cta-wrap {
+  width: 100%;
+  margin-top: 32px;
+  opacity: 0;
+  animation: fadeUp 0.8s 0.6s ease forwards;
+}
+
+.cta-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  padding: 18px 28px;
+  background: var(--gold);
+  color: var(--vine-d);
+  text-decoration: none;
+  border-radius: 3px;
+  font-family: 'DM Mono', monospace;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 4px 24px rgba(201,168,76,0.25);
+}
+
+.cta-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.12), transparent);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.cta-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(201,168,76,0.4);
+}
+
+.cta-btn:hover::before { opacity: 1; }
+.cta-btn:active { transform: translateY(0); }
+
+.cta-icon {
+  width: 22px; height: 22px;
+  flex-shrink: 0;
+}
+
+.cta-btn span { flex: 1; text-align: center; }
+
+/* ── SECONDARY LINK ─────────────────────────────────────────── */
+.secondary {
+  margin-top: 14px;
+  text-align: center;
+  opacity: 0;
+  animation: fadeUp 0.8s 0.68s ease forwards;
+}
+
+.secondary p {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: rgba(232,223,200,0.38);
+  text-transform: uppercase;
+}
+
+/* ── DIVIDER ────────────────────────────────────────────────── */
+.divider {
+  width: 100%;
+  margin: 32px 0 0;
+  opacity: 0;
+  animation: fadeUp 0.8s 0.72s ease forwards;
+}
+
+.divider-inner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.divider-line {
+  flex: 1;
+  height: 1px;
+  background: rgba(201,168,76,0.2);
+}
+
+.divider-text {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  color: rgba(201,168,76,0.4);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* ── FOUNDER STRIP ──────────────────────────────────────────── */
+.founder {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 20px;
+  padding: 16px;
+  border: 1px solid rgba(201,168,76,0.18);
+  border-radius: 3px;
+  background: rgba(26,58,26,0.4);
+  backdrop-filter: blur(6px);
+  opacity: 0;
+  animation: fadeUp 0.8s 0.78s ease forwards;
+}
+
+.founder-avatar {
+  width: 46px; height: 46px;
+  border-radius: 50%;
+  border: 2px solid var(--gold);
+  background: var(--vine);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--gold);
+  flex-shrink: 0;
+}
+
+.founder-text { flex: 1; }
+
+.founder-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--cream);
+  line-height: 1.2;
+}
+
+.founder-role {
+  font-family: 'DM Mono', monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  color: var(--gold3);
+  text-transform: uppercase;
+  margin-top: 3px;
+}
+
+/* ── FOOTER ─────────────────────────────────────────────────── */
+.footer {
+  margin-top: 40px;
+  text-align: center;
+  opacity: 0;
+  animation: fadeUp 0.8s 0.85s ease forwards;
+}
+
+.footer p {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  color: rgba(232,223,200,0.22);
+  text-transform: uppercase;
+}
+
+/* ── BORDER FRAME ───────────────────────────────────────────── */
+.frame {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.frame::before {
+  content: '';
+  position: absolute;
+  inset: 12px;
+  border: 1px solid rgba(201,168,76,0.14);
+  border-radius: 2px;
+}
+
+/* ── ANIMATIONS ─────────────────────────────────────────────── */
+@keyframes fadeUp {
+  from { opacity:0; transform: translateY(18px); }
+  to   { opacity:1; transform: none; }
+}
+
+/* Pulse on CTA */
+@keyframes pulse-gold {
+  0%, 100% { box-shadow: 0 4px 24px rgba(201,168,76,0.25); }
+  50%       { box-shadow: 0 4px 40px rgba(201,168,76,0.5); }
+}
+
+.cta-btn { animation: pulse-gold 3s 2s ease-in-out infinite; }
+.cta-btn:hover { animation: none; }
+
+/* ── MOBILE REFINEMENTS ─────────────────────────────────────── */
+@media (max-width: 400px) {
+  .pillars { flex-wrap: wrap; justify-content: center; }
+  .pillar-tag { font-size: 9px; }
+}
+</style>
+</head>
+
+<body>
+
+<!-- Background -->
+<div class="bg-canvas" aria-hidden="true">
+  <div class="bg-grid"></div>
+  <div class="bg-glow bg-glow-1"></div>
+  <div class="bg-glow bg-glow-2"></div>
+  <div class="bg-glow bg-glow-3"></div>
+  <div class="bg-grain"></div>
+</div>
+
+<!-- Fixed border frame -->
+<div class="frame" aria-hidden="true"></div>
+
+<!-- Main page -->
+<main class="page">
+  <div class="card">
+
+    <!-- Vine icon -->
+    <div class="vine-icon" aria-hidden="true">
+      <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Stem -->
+        <line x1="32" y1="58" x2="32" y2="30" stroke="#6b4c2a" stroke-width="3" stroke-linecap="round"/>
+        <!-- Main branches -->
+        <path d="M32 44 Q20 38 14 28" stroke="#2e6b2e" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+        <path d="M32 38 Q44 32 50 22" stroke="#2e6b2e" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+        <path d="M32 50 Q24 46 18 42" stroke="#48864a" stroke-width="2" stroke-linecap="round" fill="none"/>
+        <path d="M32 46 Q40 42 46 36" stroke="#48864a" stroke-width="2" stroke-linecap="round" fill="none"/>
+        <!-- Leaves -->
+        <ellipse cx="13" cy="26" rx="7" ry="4.5" transform="rotate(-30 13 26)" fill="#2e6b2e" opacity="0.9"/>
+        <ellipse cx="51" cy="20" rx="7" ry="4.5" transform="rotate(25 51 20)" fill="#2e6b2e" opacity="0.9"/>
+        <ellipse cx="17" cy="40" rx="5" ry="3.5" transform="rotate(-20 17 40)" fill="#48864a" opacity="0.8"/>
+        <ellipse cx="47" cy="34" rx="5" ry="3.5" transform="rotate(20 47 34)" fill="#48864a" opacity="0.8"/>
+        <!-- Grape cluster -->
+        <circle cx="32" cy="18" r="4.5" fill="#c9a84c"/>
+        <circle cx="26" cy="22" r="3.5" fill="#c9a84c" opacity="0.85"/>
+        <circle cx="38" cy="22" r="3.5" fill="#c9a84c" opacity="0.85"/>
+        <circle cx="29" cy="27" r="3" fill="#a8883c" opacity="0.75"/>
+        <circle cx="35" cy="27" r="3" fill="#a8883c" opacity="0.75"/>
+        <!-- Highlight -->
+        <circle cx="30.5" cy="16.5" r="1.5" fill="#e6c86e" opacity="0.6"/>
+      </svg>
+    </div>
+
+    <!-- Wordmark -->
+    <div class="wordmark">
+      <span class="wordmark-modern">MODERN</span>
+      <span class="wordmark-vine">VINE</span>
+    </div>
+
+    <!-- Gold rule -->
+    <div class="rule" aria-hidden="true">
+      <div class="rule-line"></div>
+      <div class="rule-diamond"></div>
+      <div class="rule-line"></div>
+    </div>
+
+    <!-- Verse -->
+    <div class="verse">
+      <p class="verse-text">
+        "This is to my Father's glory, that you<br>
+        bear much fruit, showing yourselves<br>
+        to be my disciples."
+      </p>
+      <span class="verse-ref">John 15 : 8</span>
+    </div>
+
+    <!-- Tagline -->
+    <div class="tagline">
+      <p>
+        An online community for <strong>young Nigerians</strong>
+        navigating the modern world — rooted in
+        the true Vine.
+      </p>
+    </div>
+
+    <!-- Pillar tags -->
+    <div class="pillars" aria-label="Community pillars">
+      <span class="pillar-tag">Abide</span>
+      <span class="pillar-tag">Navigate</span>
+      <span class="pillar-tag">Build</span>
+      <span class="pillar-tag">Prune</span>
+      <span class="pillar-tag">Bear Fruit</span>
+    </div>
+
+    <!-- CTA -->
+    <div class="cta-wrap">
+      <a
+        href="YOUR_WHATSAPP_COMMUNITY_LINK_HERE"
+        class="cta-btn"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Join the MODERNVINE WhatsApp Community"
+      >
+        <!-- WhatsApp icon -->
+        <svg class="cta-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+        </svg>
+        <span>Join the Community</span>
+      </a>
+    </div>
+
+    <!-- Free note -->
+    <div class="secondary">
+      <p>Free to join &nbsp;·&nbsp; WhatsApp Community</p>
+    </div>
+
+    <!-- Divider -->
+    <div class="divider" aria-hidden="true">
+      <div class="divider-inner">
+        <div class="divider-line"></div>
+        <span class="divider-text">Founded by</span>
+        <div class="divider-line"></div>
+      </div>
+    </div>
+
+    <!-- Founder strip -->
+    <div class="founder">
+      <div class="founder-avatar" aria-hidden="true">CA</div>
+      <div class="founder-text">
+        <div class="founder-name">Christopher Amos</div>
+        <div class="founder-role">Founder &nbsp;·&nbsp; Personal Development Educator</div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <p>MODERNVINE &nbsp;·&nbsp; Rooted &nbsp;·&nbsp; Navigating &nbsp;·&nbsp; Fruitful</p>
+    </div>
+
+  </div>
+</main>
+
+</body>
+</html>
